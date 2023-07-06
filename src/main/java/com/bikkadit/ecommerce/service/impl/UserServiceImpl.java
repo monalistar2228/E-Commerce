@@ -7,6 +7,7 @@ import com.bikkadit.ecommerce.service.UserService;
 import com.bikkadit.ecommerce.utility.GlobalResources;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,16 +18,23 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private ModelMapper mapper;
 
+    /**
+     * @Author Monali
+     * @apiNote create user
+     * @param userDto
+     * @return newDto
+     */
     @Override
     public UserDto createUser(UserDto userDto) {
 
-
+        logger.info("Request initiated for SerServiceImpl to create user ");
 // generate unique id in string format
        String userId =  UUID.randomUUID().toString();
             userDto.setUserId(userId);
@@ -39,10 +47,18 @@ public class UserServiceImpl implements UserService {
         //entity to dto
 
         UserDto newDto = entityToDto(savedUser);
+        logger.info("Request completed foe UserServiceImpl to create user");
         return newDto;
     }
 
 
+    /**
+     * @Authoe Monali
+     * @apiNote update user
+     * @param userDto
+     * @param userId
+     * @return updated Dto
+     */
     @Override
     public UserDto updatedUser(UserDto userDto, String userId) {
        User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found with given id"));
@@ -57,6 +73,12 @@ public class UserServiceImpl implements UserService {
        UserDto updatedDto = entityToDto(updatedUser);
        return updatedDto ;
     }
+
+    /**
+     * @author Monali
+     * @apiNote delete user
+      * @param userId
+     */
     @Override
     public void deleteUser(String userId) {
 
@@ -64,6 +86,11 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
     }
 
+    /**
+     * @author Monali
+     * @apiNote get all user
+      * @return list of dto
+     */
     @Override
     public List<UserDto> getAllUser() {
        List<User> users = userRepository.findAll();
@@ -71,6 +98,12 @@ public class UserServiceImpl implements UserService {
         return dtoList;
     }
 
+    /**
+     * @author Monali
+     * @apiNote get user by id
+     * @param userId
+     * @return user
+     */
     @Override
     public UserDto getUserById(String userId) {
         User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found with given id"));
@@ -78,12 +111,24 @@ public class UserServiceImpl implements UserService {
         return entityToDto(user);
     }
 
+    /**
+     * @author Monali
+     * @apiNote get user by email
+     * @param email
+     * @return user
+     */
     @Override
     public UserDto getUserByEmail(String email) {
        User user =  userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User not found with emailID and password"));
        return entityToDto(user);
     }
 
+    /**
+     * @author Monali
+     * @apiNote search user
+     * @param keyword
+     * @return dto list
+     */
     @Override
     public List<UserDto> searchUser(String keyword) {
         List<User> users = userRepository.findByNameContaining(keyword);
