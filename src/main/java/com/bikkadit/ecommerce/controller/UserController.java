@@ -52,9 +52,9 @@ public class UserController {
     @PutMapping(value = "/user/{userId}")
     public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto, @PathVariable String userId){
 
-        logger.info("Request initiated for user service to update user");
+        logger.info("Request initiated for user service to update user with user id {}",userId);
         UserDto updatedUser = this.userService.updatedUser(userDto, userId);
-        logger.info("Request completed for user service to update user");
+        logger.info("Request completed for user service to update user with user id {}",userId);
         return new ResponseEntity<UserDto>(updatedUser,HttpStatus.CREATED);
     }
 
@@ -69,9 +69,9 @@ public class UserController {
     @DeleteMapping(value = "/users/{userId}")
     public ResponseEntity<ApiResponse> deleteUser(@PathVariable String userId){
 
-        logger.info("Request initiated for user service to delete user");
+        logger.info("Request initiated for user service to delete user with userId {}",userId);
         userService.deleteUser(userId);
-        logger.info("Request completed for user service to delete user");
+        logger.info("Request completed for user service to delete user with userId {}",userId);
         return new ResponseEntity(new ApiResponse("Delete user successfully", true),HttpStatus.OK);
 
     }
@@ -87,7 +87,6 @@ public class UserController {
 
         logger.info("Request initiated for user service to get all users");
         List<UserDto> allUsers = userService.getAllUser();
-
         logger.info("Request Completed for user service to get all users");
         return new ResponseEntity<List<UserDto>>(allUsers,HttpStatus.OK);
     }
@@ -103,9 +102,9 @@ public class UserController {
     @GetMapping(value = "/users/{userId}")
     public ResponseEntity<UserDto> getUserById(@PathVariable String  userId)
     {
-        logger.info("Request initiated for user service to get user with id");
+        logger.info("Request initiated for user service to get user with id {}",userId);
         UserDto userDto = userService.getUserById(userId);
-        logger.info("Request completed for user service to get user with id");
+        logger.info("Request completed for user service to get user with id {}",userId);
         return new ResponseEntity<UserDto>(userDto,HttpStatus.OK);
 
     }
