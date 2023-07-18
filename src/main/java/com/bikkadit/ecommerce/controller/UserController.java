@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -31,7 +32,7 @@ public class UserController {
      * @return User
      */
     @PostMapping(value = "/user")
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto){
+    public ResponseEntity<UserDto> createUser(@Valid  @RequestBody UserDto userDto){
 
         logger.info("Request initiated for user service to create users");
         UserDto createUser = userService.createUser(userDto);
@@ -50,12 +51,12 @@ public class UserController {
      * @return updated user
      */
     @PutMapping(value = "/user/{userId}")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto, @PathVariable String userId){
+    public ResponseEntity<UserDto> updateUser(@PathVariable("userId") String userId, @Valid @RequestBody UserDto userDto){
 
         logger.info("Request initiated for user service to update user with user id {}",userId);
         UserDto updatedUser = this.userService.updatedUser(userDto, userId);
         logger.info("Request completed for user service to update user with user id {}",userId);
-        return new ResponseEntity<UserDto>(updatedUser,HttpStatus.CREATED);
+        return new ResponseEntity<UserDto>(updatedUser,HttpStatus.OK);
     }
 
     //Delete
@@ -71,8 +72,9 @@ public class UserController {
 
         logger.info("Request initiated for user service to delete user with userId {}",userId);
         userService.deleteUser(userId);
+        ApiResponse message = ApiResponse.builder().message("User deleted Successfully !!").success(true).status(HttpStatus.OK).build();
         logger.info("Request completed for user service to delete user with userId {}",userId);
-        return new ResponseEntity(new ApiResponse("Delete user successfully", true),HttpStatus.OK);
+        return new ResponseEntity <ApiResponse>(message,HttpStatus.OK);
 
     }
     // get All user
@@ -83,12 +85,16 @@ public class UserController {
      * @return List of all Users
      */
     @GetMapping(value = "/users")
-    public ResponseEntity<List<UserDto>> getAllUsers(){
+    public ResponseEntity<List<UserDto>> getAllUsers(
+            @RequestParam(value = "pageNumber",defaultValue = "0",required = false) int pageNumber,
+            @RequestParam(value = "pageSize",defaultValue = "10",required = false) int pageSize){
 
         logger.info("Request initiated for user service to get all users");
-        List<UserDto> allUsers = userService.getAllUser();
+
+        List<UserDto> allUsers = userService.getAllUser(pageNumber,pageSize);
+
         logger.info("Request Completed for user service to get all users");
-        return new ResponseEntity<List<UserDto>>(allUsers,HttpStatus.OK);
+        return new ResponseEntity<>(userService.getAllUser(pageNumber,pageSize),HttpStatus.OK);
     }
 
     // get single user by id
